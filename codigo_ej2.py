@@ -3,9 +3,8 @@ from PyQt6 import QtWidgets, uic
 
 from VentanaPrincipal import Ui_VentanaPrincipal
 
-
 class Mascota:
-    def __init__(self, nombre: str, especie: str, edad: int, peso: float):
+    def __init__(self, nombre: str, especie: str, edad: int, peso:float):
         self.nombre = nombre
         self.especie = especie
         self.edad = edad
@@ -18,40 +17,43 @@ class Mascota:
 class Ventana(QtWidgets.QMainWindow, Ui_VentanaPrincipal):
     def __init__(self, *args, obj=None, **kwargs):
         super(Ventana, self).__init__(*args, **kwargs)
-        # Implementación de Ui_VentanaPrincipal
         self.setupUi(self)
         self.pushButton.clicked.connect(self.guardar_mascota)
 
+    def obtener_nombre(self) -> str:
+        return self.entrada_nombre.text()
+
+    def obtener_especie(self) -> str:
+        return self.entrada_especie.text()
+
+    def obtener_edad(self) -> int:
+        return self.entrada_edad.value()
+
+    def obtener_peso(self) -> float:
+        return self.entrada_peso.value()
+
     def guardar_mascota(self):
-        nombre = self.entrada_nombre.text()
-        especie = self.entrada_especie.text()
-        edad = self.entrada_edad.value()
-        peso = self.entrada_peso.value()
+        nombre = self.obtener_nombre()
+        especie = self.obtener_especie()
+        edad = self.obtener_edad()
+        peso = self.obtener_peso()
 
         mascota = Mascota(nombre, especie, edad, peso)
-        self.mostrar_ventana_secundaria(mascota)
-
-    def mostrar_ventana_secundaria(self, mascota: Mascota):
         ventana_secundaria = VentanaSecundaria(mascota)
-        ventana_secundaria.exec()
-
+        ventana_secundaria.show()
 
 class VentanaSecundaria(QtWidgets.QDialog):
     def __init__(self, mascota: Mascota, parent=None):
         super(VentanaSecundaria, self).__init__(parent)
         self.setWindowTitle("Ventana Secundaria")
-        self.setModal(True)
-
-        layout = QtWidgets.QVBoxLayout()
-        label = QtWidgets.QLabel(str(mascota))
-        layout.addWidget(label)
-
-        self.setLayout(layout)
+        self.layout = QtWidgets.QVBoxLayout()
+        self.label = QtWidgets.QLabel(str(mascota))
+        self.layout.addWidget(self.label)
+        self.setLayout(self.layout)
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    
     vista = Ventana()
     vista.show()
     sys.exit(app.exec())
